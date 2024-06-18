@@ -1,0 +1,17 @@
+{
+    "version": 0.4,
+    "files": [
+        "client.lua",
+        "core.lua",
+        "complete.lua",
+        "mount.lua",
+        "FTPConnection.lua",
+        "FTPMount.lua"
+    ],
+    "exec": "client.lua",
+    "cmpt": "complete",
+    "startup": [
+        "core.lua",
+        "mount.lua"
+    ]
+}
