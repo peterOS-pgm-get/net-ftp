@@ -43,10 +43,10 @@ ftp.setup = function()
                 cfg = defCfg
             else
                 if fixCfg() then
-                    local f = fs.open(cfgPath, "w")
-                    if f then
-                        f.write(textutils.serialiseJSON(cfg))
-                        f.close()
+                    local fw = fs.open(cfgPath, "w")
+                    if fw then
+                        fw.write(textutils.serialiseJSON(cfg))
+                        fw.close()
                     else
                         error('Could not write config',0)
                     end
@@ -67,7 +67,7 @@ end
 
 --- Send a file to the remote
 --- @param lFile string local file path
---- @param dest string remote domain name or IP
+--- @param dest string|NetAddress remote domain name or IP
 --- @param rFile string remote file path
 --- @return boolean suc if it succeeded
 --- @return string error error description
@@ -99,7 +99,7 @@ ftp.send = function(lFile, dest, rFile)
 end
 --- Send a file to the remote
 --- @param file string File contents
---- @param dest string remote domain name or IP
+--- @param dest string|NetAddress remote domain name or IP
 --- @param rFile string remote file path
 --- @return boolean suc if it succeeded
 --- @return string error error description
@@ -125,13 +125,13 @@ ftp.sendRaw = function(file, dest, rFile)
 end
 ---Requests a file from remote and saves it to a local file
 ---@param rFile string remote file path
----@param origin string|number Remote domain name or IP
+---@param remote string|NetAddress Remote domain name or IP
 ---@param lFile string local file path
 ---@return boolean suc if the request was successful
 ---@return string error error description
-ftp.request = function(rFile, origin, lFile)
+ftp.request = function(rFile, remote, lFile)
     ftp.setup()
-    local rsp = net.sendAdvSync(net.standardPorts.ftp, origin, {
+    local rsp = net.sendAdvSync(net.standardPorts.ftp, remote, {
         type = "ftp",
         action = "get",
     }, {
@@ -155,14 +155,14 @@ ftp.request = function(rFile, origin, lFile)
 
     return true, ""
 end
----Requests a file from remote and saves it to a local file
+---Requests a file from remote and return it's content
 ---@param rFile string remote file path
----@param origin string|number Remote domain name or IP
+---@param remote string|NetAddress Remote domain name or IP
 ---@return boolean suc if the request was successful
 ---@return string rsp file text or error description
-ftp.requestRaw = function(rFile, origin)
+ftp.requestRaw = function(rFile, remote)
     ftp.setup()
-    local rsp = net.sendAdvSync(net.standardPorts.ftp, origin, {
+    local rsp = net.sendAdvSync(net.standardPorts.ftp, remote, {
         type = "ftp",
         action = "get",
     }, {
@@ -181,12 +181,12 @@ ftp.requestRaw = function(rFile, origin)
 end
 ---Check if a file exists on the remote
 ---@param rFile string remote path
----@param origin string |number remote domain or IP
+---@param remote string|NetAddress remote domain or IP
 ---@return boolean suc if the check could be performed
 ---@return string|boolean rsp if the file existed OR error description
-ftp.check = function(rFile, origin)
+ftp.check = function(rFile, remote)
     ftp.setup()
-    local rsp = net.sendAdvSync(net.standardPorts.ftp, origin, {
+    local rsp = net.sendAdvSync(net.standardPorts.ftp, remote, {
         type = "ftp",
         action = "check",
     }, {
@@ -205,12 +205,12 @@ ftp.check = function(rFile, origin)
 end
 ---List files and folders on remote
 ---@param rRoot string remote path
----@param origin string |number remote domain or IP
+---@param remote string |NetAddress remote domain or IP
 ---@return boolean suc if the check could be performed
 ---@return string|table rsp list of files and folders OR error description
-ftp.list = function(rRoot, origin)
+ftp.list = function(rRoot, remote)
     ftp.setup()
-    local rsp = net.sendAdvSync(net.standardPorts.ftp, origin, {
+    local rsp = net.sendAdvSync(net.standardPorts.ftp, remote, {
         type = "ftp",
         action = "list",
     }, {
@@ -229,12 +229,12 @@ ftp.list = function(rRoot, origin)
 end
 ---Delete a file on the remote
 ---@param rFile string remote path
----@param origin string |number remote domain or IP
+---@param remote string|NetAddress remote domain or IP
 ---@return boolean suc if the deletion succeeded
 ---@return string error error description
-ftp.delete = function(rFile, origin)
+ftp.delete = function(rFile, remote)
     ftp.setup()
-    local rsp = net.sendAdvSync(net.standardPorts.ftp, origin, {
+    local rsp = net.sendAdvSync(net.standardPorts.ftp, remote, {
         type = "ftp",
         action = "delete",
     }, {
@@ -254,9 +254,9 @@ end
 ---Performs an FTP action on the remote
 ---@param action string FTP action name
 ---@param rFile string Remote file path
----@param remote string|number Remote domain or IP
+---@param remote string|NetAddress Remote domain or IP
 ---@return boolean suc if the action was successful
----@return string|table|nil rsp response fro action OR error message
+---@return string|table|nil rsp response from action OR error message
 ftp.action = function(action, rFile, remote)
     ftp.setup()
     local rsp = net.sendAdvSync(net.standardPorts.ftp, remote, {

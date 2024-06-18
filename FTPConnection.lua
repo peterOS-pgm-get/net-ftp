@@ -22,8 +22,9 @@ function ftp.FTPConnection(domain, path)
 end
 
 ---Initializes the connection
+---@package
 ---@param domain string Remote domain name
----@param root string|nil Optional. Remote root path
+---@param root string? Optional. Remote root path
 function FTPConnection:__init__(domain, root)
     self.domain = domain
     self.root = root or ''
@@ -90,7 +91,7 @@ function FTPConnection:delete(path)
     return ftp.delete(path, self.domain)
 end
 
----Gets a file from the remote
+---Gets a file from the remote and save locally
 ---@param rPath string Remote path of file
 ---@param lPath string Local path to save to
 ---@return boolean suc If the file was gotten successfully
@@ -103,7 +104,7 @@ function FTPConnection:get(rPath, lPath)
     return ftp.request(rPath, self.domain, lPath)
 end
 
----Gets a file from the remote
+---Gets a file from the remote and return contents
 ---@param path string Remote path of file
 ---@return boolean suc If the file was gotten successfully
 ---@return string fsp File content or error description
@@ -115,7 +116,7 @@ function FTPConnection:getRaw(path)
     return ftp.requestRaw(path, self.domain)
 end
 
----Sends a file to the remote
+---Sends a file to the remote by local path
 ---@param lPath string Local file path
 ---@param rPath string Remote file path from connection root
 ---@return boolean suc If the file was sent successfully
@@ -127,7 +128,7 @@ function FTPConnection:put(lPath, rPath)
     rPath = self:_fullPath(rPath or '')
     return ftp.send(lPath, self.domain, rPath)
 end
----Sends a file to the remote
+---Sends a file to the remote by contents
 ---@param rPath string Remote file path from connection root
 ---@param file string File contents
 ---@return boolean suc If the file was sent successfully

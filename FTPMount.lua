@@ -4,7 +4,7 @@
 ---@field domain string Mount domain name
 ---@field path string Mount root path
 ---@field name string Mount name
----@field lPath string local path (unused)
+---@field lPath string Local path *(Read Only)*
 ---@field con FTPConnection FTP connection to remote
 local FTPMount = {}
 
@@ -19,7 +19,7 @@ function ftp.FTPMount(name, url)
     return o
 end
 
----Initialize the FTP connection object
+---Initialize the FTP mount object
 ---@package
 ---@param name string Mount name
 ---@param url string Mount remote url
@@ -38,14 +38,15 @@ function FTPMount:isConnected()
 end
 
 ---Gets a display path for the path
----@param path string Path from remote root
----@return string path
+---@protected
+---@param path string Path from mount root
+---@return string path Path from remote root
 function FTPMount:_getDispPath(path)
     return 'ftp://'..self.domain..'/'..self.path..'/'..path
 end
 
 ---Checks if a given file exists
----@param path string Path from remote root
+---@param path string Path from mount root
 ---@return boolean exists
 function FTPMount:exists(path)
     local s, r = self.con:check(path)
@@ -56,10 +57,10 @@ function FTPMount:exists(path)
 end
 
 ---Open a remote file
----@param path string Path from remote root
+---@param path string Path from mount root
 ---@param mode string Mode string: <code>r</code>, <code>w</code>, or <code>a</code> (binary not implemented)
----@return Handle|nil handle File handle
----@return string|nil error Error message
+---@return Handle? handle File handle
+---@return string? error Error message
 function FTPMount:open(path, mode)
     if mode == 'r' then
         if not self:exists(path) then
@@ -188,7 +189,7 @@ function FTPMount:open(path, mode)
 end
 
 ---Deletes a file on the remote
----@param path string Path from remote root
+---@param path string Path from mount root
 ---@return boolean deleted
 function FTPMount:delete(path)
     local s, r = self.con:delete(path)

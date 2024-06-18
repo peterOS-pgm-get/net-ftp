@@ -271,7 +271,7 @@ local function unmount(name)
     return true
 end
 ---Get a list of all mounted ftp file servers
----@return table mounts list of local names for mounts
+---@return string[] mounts list of local names for mounts
 local function listMounts()
     local list = {}
     for name, _ in pairs(mounts) do
@@ -281,7 +281,7 @@ local function listMounts()
 end
 ---Gets the details about the named mount
 ---@param name string local mount name
----@return table|nil mount Table containing name, domain, and root OR nil if mount did not exist
+---@return table? mount Table containing name, domain, and root OR nil if mount did not exist
 local function getMount(name)
     if not mounts[name] then
         return nil
