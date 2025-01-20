@@ -1,3 +1,4 @@
+---@diagnostic disable: duplicate-set-field
 local expect = require "cc.expect"
 
 local mounts = {} ---@type FTPMount[]

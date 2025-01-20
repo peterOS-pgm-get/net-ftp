@@ -584,7 +584,7 @@ local function Connection(domain, rootPath)
     ---@param action string action name
     ---@param path string path from remote root
     ---@return boolean suc if the action was successful
-    ---@return string|table|nil rsp response fro action OR error message
+    ---@return string|table|nil rsp response from action OR error message
     function o:action(action, path)
         if not self.active then
             return false, 'Connection not open'

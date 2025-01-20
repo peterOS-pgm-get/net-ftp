@@ -62,7 +62,7 @@ if args[1] == 'check' then
 elseif args[1] == "list" then
     local s, list = ftp.list(path, domain)
     if s then
-        for _,f in pairs(list) do
+        for _,f in pairs(list--[[@as table]]) do
             print(f)
         end
     else
